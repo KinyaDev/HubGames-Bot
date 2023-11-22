@@ -1,4 +1,10 @@
-const { Client, REST, Routes, Events } = require("discord.js");
+const {
+  Client,
+  REST,
+  Routes,
+  Events,
+  GatewayIntentBits,
+} = require("discord.js");
 const express = require("express");
 const app = express();
 
@@ -19,7 +25,7 @@ for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = require(filePath);
   // Set a new item in the Collection with the key as the command name and the value as the exported module
-  if ("data" in command && "execute" in command) {
+  if ("data" in command && "run" in command) {
     client.commands.set(command.data.name, command);
   } else {
     console.log(
@@ -39,7 +45,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   try {
-    await command.execute(interaction);
+    await command.run(interaction);
   } catch (error) {
     console.error(error);
     if (interaction.replied || interaction.deferred) {
@@ -56,8 +62,19 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
+app.use(express.json());
+app.use(express.urlencoded());
+
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+
+  app.listen(process.env.PORT, () => {
+    console.log(`Web server listening on port ${process.env.PORT}`);
+  });
+
+  app.post("/job", (req, res) => {
+    console.log(req.body);
+  });
 });
 
 client.login(TOKEN);
