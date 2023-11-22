@@ -1,4 +1,7 @@
 const { Client, REST, Routes, Events } = require("discord.js");
+const express = require("express");
+const app = express();
+
 require("dotenv").config();
 
 let { TOKEN, GUILD_ID } = process.env;
