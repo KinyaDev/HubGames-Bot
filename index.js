@@ -7,6 +7,8 @@ const {
 } = require("discord.js");
 const express = require("express");
 const app = express();
+const path = require("path");
+const fs = require("fs");
 
 require("dotenv").config();
 
