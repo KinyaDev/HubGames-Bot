@@ -74,8 +74,39 @@ client.once(Events.ClientReady, (c) => {
     console.log(`Web server listening on port ${process.env.PORT}`);
   });
 
-  app.post("/job", (req, res) => {
-    console.log(req.body);
+  app.post("/jobs", async (req, res) => {
+    let { domaine, nom, pseudo, email, portfolio, motivation } = req.body;
+    let jobChannel = await c.channels.fetch("1172618384823816192");
+    if (!jobChannel.isTextBased()) return;
+
+    jobChannel.send({
+      embeds: [
+        {
+          title: `${pseudo} (${nom})`,
+          description: motivation,
+          fields: [
+            {
+              name: "Domaine",
+              value: `${domaine}`,
+              inline: true,
+            },
+            {
+              name: "Email",
+              value: email,
+              inline: true,
+            },
+            {
+              name: "Lien Portfolio/CV",
+              value: portfolio,
+            },
+          ],
+        },
+      ],
+    });
+
+    res.send(
+      "Formulaire envoyé, vous pouvez revenir à <a href='https://hubgames.studio/'>l'accueil</a>"
+    );
   });
 });
 
